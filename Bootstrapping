@@ -1,0 +1,19 @@
+install.packages("readstata13")
+library(readstata13)
+library(foreign)
+setwd("C:/Users/Nareg Baghous/Desktop")
+nsw_dta <- read.dta13("nsw.")
+nsw_dta <- read.dta("nsw.dta")
+nsw_dta_1 <-nsw_dta[,-1]
+nsw_dta_1
+set.seed(1)
+model_5<-glm(treat~.-re78, data=nsw_dta_1, family = "binomial")
+summary(model_5)
+nsw_dta_1_treat<-nsw_dta_1[nsw_dta_1$treat==1,]
+nsw_dta_1_control<-nsw_dta_1[nsw_dta_1$treat==0,]
+
+nsw_dta_1_control_predict<-predict(model_5,data =nsw_dta_1_control,type="response" )
+nsw_dta_1_treat_predict<-predict(model_5,data=nsw_dta_1_treat, type="response" )
+hist(nsw_dta_1_treat_predict,col="red",main = "Histogram of estimated probabilities of treatment_group", xlab ="Probability of treatment",ylab="Density" )
+hist(nsw_dta_1_control_predict,col="blue",main = "Histogram of estimated probabilities of control", xlab ="Probability of control_group",ylab="Density" )
+t.test(nsw_dta_1_control_predict,nsw_dta_1_control)
